@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">HaShqipTiPlako</string>
+    <string name="hint">Word length in characters:</string>
+    <string name="b5">5</string>
+    <string name="b6">6</string>
+    <string name="b7">7</string>
+    <string name="b8">8</string>
+    <string name="flag">The Albanian Flag U+1F1E6 U+1F1F1</string>
+    <string name="secret">Magic WORD!</string>
+    <string name="q5">#####</string>
+    <string name="q6">######</string>
+    <string name="q7">#######</string>
+    <string name="q8">########</string>
+
+</resources>
