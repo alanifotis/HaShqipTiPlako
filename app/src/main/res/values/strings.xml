@@ -11,5 +11,6 @@
     <string name="q6">######</string>
     <string name="q7">#######</string>
     <string name="q8">########</string>
+    <string name="inputHint">Gjeje pra: </string>
 
 </resources>
