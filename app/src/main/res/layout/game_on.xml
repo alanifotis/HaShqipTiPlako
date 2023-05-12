@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainFrame"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#000000"
     tools:context=".MainActivity">
 
@@ -26,7 +26,7 @@
         app:srcCompat="@drawable/albanian" />
 
     <TextView
-        android:id="@+id/textHint"
+        android:id="@+id/gameHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
@@ -62,35 +62,38 @@
         tools:text="@string/secret" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="310dp"
+        android:id="@+id/inputLayout"
+        android:layout_width="307dp"
         android:layout_height="54dp"
-        android:layout_marginTop="508dp"
-        android:layout_marginBottom="169dp"
-        android:background="@color/purple_500"
+        android:layout_marginTop="328dp"
+        android:layout_marginBottom="327dp"
+        android:hint="@string/inputHint"
+        app:boxBackgroundColor="@android:color/white"
+        app:boxBackgroundMode="filled"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp"
+        app:boxStrokeColor="@android:color/black"
+        app:boxStrokeWidth="2dp"
+        app:errorEnabled="true"
+        app:errorTextColor="@color/purple_200"
+        app:hintTextColor="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rounded"
+            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            android:inputType="text"
+            android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:layout_width="200sp"
-        android:layout_height="50sp"
-        android:layout_marginTop="448dp"
-        android:layout_marginBottom="233dp"
-        android:background="@color/black"
-        android:backgroundTint="@color/red"
-        android:hint="@string/inputHint"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

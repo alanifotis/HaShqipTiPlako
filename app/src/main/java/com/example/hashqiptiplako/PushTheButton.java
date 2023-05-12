@@ -1,12 +1,12 @@
 package com.example.hashqiptiplako;
 
-import android.app.Activity;
+
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.content.Context;
+
+import java.io.IOException;
 
 
 public class PushTheButton implements View.OnClickListener {
@@ -33,11 +33,13 @@ public class PushTheButton implements View.OnClickListener {
         b8.setOnClickListener(this);
     }
 
-    private void launchNewActivity(int i) {
+    private void launchNewActivity(int i, String word) {
         Intent intent = new Intent(mContext, GameOnActivity.class);
         int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
         String secretWord = mContext.getResources().getString(resourceId);
         intent.putExtra("secretWord", secretWord);
+        intent.putExtra("randomWord", word);
+        intent.putExtra("length", i);
         mContext.startActivity(intent);
         mActivity.finish(); // finish the MainActivity to prevent going back to it
     }
@@ -45,20 +47,20 @@ public class PushTheButton implements View.OnClickListener {
 
 
     //String word = RandomWord.selectWord(mContext, i);
-        //TextView secretWordTextView = ((Activity) mContext).findViewById(R.id.gameWord);
-        //int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
-        //String secretWord = mContext.getResources().getString(resourceId);
-        //secretWordTextView.setText(secretWord);
-        //} catch (IOException e) {
-        //    throw new RuntimeException(e);
-        //}
-        //hideButtons();
-        // Do something with buttonNumber here
+    //TextView secretWordTextView = ((Activity) mContext).findViewById(R.id.gameWord);
+    //int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
+    //String secretWord = mContext.getResources().getString(resourceId);
+    //secretWordTextView.setText(secretWord);
+    //} catch (IOException e) {
+    //    throw new RuntimeException(e);
+    //}
+    //hideButtons();
+    // Do something with buttonNumber here
 
-        // Get the secret word TextView from the GameOnActivity layout
-        //TextView secretWordTextView = mContext.TextViewfindViewById(R.id.secretWord);
+    // Get the secret word TextView from the GameOnActivity layout
+    //TextView secretWordTextView = mContext.TextViewfindViewById(R.id.secretWord);
 
-        // Set the secret word text using a string resource ID from game_on.xml
+    // Set the secret word text using a string resource ID from game_on.xml
         /*int resourceId = mActivity.getResources().getIdentifier("q" + currentButtonNumber, "string", mContext.getPackageName());
         String secretWord = mActivity.getResources().getString(resourceId);
         secretWordTextView.setText(secretWord);
@@ -75,7 +77,6 @@ public class PushTheButton implements View.OnClickListener {
     //}
 
 
-
     private static int getButtonNumber(Button button) {
         if (button.getId() == R.id.b5) {
             return 5;
@@ -90,34 +91,29 @@ public class PushTheButton implements View.OnClickListener {
         }
     }
 
-    private void hideButtons() {
+    @Override
+    public void onClick(View view) {
+        Button button = (Button) view;
+        int i = getButtonNumber(button);
+        try {
+            String word = RandomWord.selectWord(mContext, i);
+            launchNewActivity(i, word);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+    /* private void hideButtons() {
         b5.setVisibility(View.GONE);
         b6.setVisibility(View.GONE);
         b7.setVisibility(View.GONE);
         b8.setVisibility(View.GONE);
         TextView hint = ((MainActivity) mContext).findViewById(R.id.textHint);
         hint.setVisibility(View.GONE);
-    }
+    }*/
 
-    @Override
-    public void onClick(View view) {
-        Button button = (Button) view;
-        //try {
 
-            int i = getButtonNumber(button);
-            launchNewActivity(i);
-            //String word = RandomWord.selectWord(mContext, i);
-            //TextView secretWordTextView = ((MainActivity) mContext).findViewById(R.id.secretWord);
-            //int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
-            //String secretWord = mContext.getResources().getString(resourceId);
-            //secretWordTextView.setText(secretWord);
-        //} catch (IOException e) {
-        //    throw new RuntimeException(e);
-        //}
-        //hideButtons();
-        // Do something with buttonNumber here
-    }
-}
 
 
 
