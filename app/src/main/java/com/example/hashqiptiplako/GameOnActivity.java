@@ -24,8 +24,8 @@ public class GameOnActivity extends AppCompatActivity {
         TextInputLayout inputLayout = findViewById(R.id.inputLayout);
         TextInputEditText inputEditText = findViewById(R.id.inputEditText);
         InputListener listen = (new InputListener(inputLayout, this, randomWord, i + 1));
-
-        for (int j = 0; j < i+1; i++) {
+        inputEditText.setOnEditorActionListener(listen);
+        for (int j = 0; j < (i+1); j++) {
             inputEditText.setOnEditorActionListener(listen);
         }
     }
