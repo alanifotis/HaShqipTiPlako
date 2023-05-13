@@ -16,18 +16,15 @@ public class GameOnActivity extends AppCompatActivity {
         setContentView(R.layout.game_on);
         TextView gameWordTextView = findViewById(R.id.gameWord);
         String randomWord = getIntent().getStringExtra("randomWord");
-        TextView randomTextView = findViewById(R.id.gameHint);
-        randomTextView.setText(randomWord);
+        //TextView randomTextView = findViewById(R.id.gameHint);
+        //randomTextView.setText(randomWord);
         String secretWord = getIntent().getStringExtra("secretWord");
         gameWordTextView.setText(secretWord);
         int i = getIntent().getIntExtra("length", 1);
-        char[] guessedWord = new char[randomWord.length()];
 
         TextInputLayout inputLayout = findViewById(R.id.inputLayout);
         TextInputEditText inputEditText = findViewById(R.id.inputEditText);
         InputListener listen = (new InputListener(inputLayout, this, randomWord, i + 1));
-
-        //inputEditText.setOnEditorActionListener(listen);
 
         for (int j = 0; j < (i+1); j++) {
             inputEditText.setOnEditorActionListener(listen);

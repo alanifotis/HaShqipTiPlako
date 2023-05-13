@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">HaShqipTiPlako</string>
     <string name="hint">Word length in characters:</string>
+    <string name="b1">1</string>
+    <string name="b2">2</string>
+    <string name="b3">3</string>
+    <string name="b4">4</string>
     <string name="b5">5</string>
     <string name="b6">6</string>
     <string name="b7">7</string>
@@ -12,5 +16,5 @@
     <string name="q7">#######</string>
     <string name="q8">########</string>
     <string name="inputHint">Gjeje pra: </string>
-
+    <string name="incorrectPlace">Po kjo ku e ka vendin plako!?</string>
 </resources>

@@ -2,7 +2,9 @@ package com.example.hashqiptiplako;
 import android.app.Activity;
 import android.content.Context;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,7 +18,9 @@ public class InputListener implements TextView.OnEditorActionListener {
     private final String randomWord;
     private final int maxAttempts;
     private int attempts;
-    private StringBuilder stringBuilder = new StringBuilder();
+
+    private final char[] dest;
+
 
     public InputListener(TextInputLayout inputLayout, Context context, String randomWord, int maxAttempts) {
         this.inputLayout = inputLayout;
@@ -24,67 +28,118 @@ public class InputListener implements TextView.OnEditorActionListener {
         this.randomWord = randomWord;
         this.maxAttempts = maxAttempts;
         this.attempts = 0;
+        this.dest = new char[randomWord.length()];
+        Arrays.fill(dest, '#');
+
+
+
+
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_DOWN) {
+            // hide the keyboard
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
             String input = v.getText().toString().trim();
 
-
-
-            if (input.isEmpty()) {
-                inputLayout.setError("Input cannot be empty");
+            if (!isValidInput(input)) {
                 return false;
             }
 
-            if (!input.matches("[A-Za-z]+")) {
-                inputLayout.setError("Input should contain only letters from A-Z");
-                return false;
-            }
+            TextView gameHintTextView = ((Activity) context).findViewById(R.id.gameWord);
+            String newHintString = updateGameHint(input, randomWord, dest);
+            gameHintTextView.setText(newHintString);
 
-            inputLayout.setError(null);
-
-            // Remove trailing and leading white spaces
-            input = input.trim();
-
-            // Compare the input with the random word
-            if (input.length() != randomWord.length()) {
-                Toast.makeText(context, "Input should have the same length as the random word", Toast.LENGTH_SHORT).show();
-                return false;
-            }
 
             attempts++;
-            TextView gameHintTextView = ((Activity) context).findViewById(R.id.gameWord);
-            int l = randomWord.length();
-            char[] letter = new char[l];
-            for (int i = 0; i < l; i++) {
-                if (randomWord.charAt(i) == input.charAt(i)) {
-                    this.stringBuilder.append(input.charAt(i));
-                } else {
-                    if (this.stringBuilder.toString().charAt(i) == '#' || stringBuilder.toString().charAt(i) == '\0') {
 
-                    }
-                    this.stringBuilder.append("#");
-                }
-            }
-            gameHintTextView.setText(String.valueOf(this.stringBuilder.toString()));
-
-
-            if (input.equalsIgnoreCase(randomWord)) {
-                Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show();
+            if (isGameOver(input)) {
                 return true;
-
             } else {
-                if (attempts == maxAttempts) {
-                    Toast.makeText(context, "Incorrect! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
-                    return true;
-                } else {
-                    Toast.makeText(context, "Incorrect, try again! Attempts left: " + (maxAttempts - attempts), Toast.LENGTH_SHORT).show();
-                    return false;
-                }
+                Toast.makeText(context, "Incorrect, try again! Attempts left: " + (maxAttempts - attempts), Toast.LENGTH_SHORT).show();
+                return false;
             }
         }
         return false;
     }
+
+    private String updateGameHint(String input, String randomWord, char[] currentHint) {
+        StringBuilder newHint = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char guessedChar = input.charAt(i);
+            if (guessedChar == randomWord.charAt(i)) {
+                // Guessed character is correct, so show it in the game word
+                newHint.append(guessedChar);
+                currentHint[i] = guessedChar;
+            } else if (currentHint[i] != '#' && currentHint[i] != '\0') {
+                // Character has already been correctly guessed in a previous round,
+                // so leave it as is in the game word
+                // (i.e., don't replace it with '#')
+                newHint.append(currentHint[i]);
+            } else {
+                // Guessed character is incorrect, so hide it with a '#'
+                newHint.append('#');
+                // Check if the guessed character is present in the random word
+                for (int j = 0; j < randomWord.length(); j++) {
+                    if (guessedChar == randomWord.charAt(j)) {
+                        // Guessed character is present in the random word, so make the corresponding TextView visible
+                        int textViewId = context.getResources().getIdentifier("g" + (j+1), "id", context.getPackageName());
+                        TextView textView = ((Activity) context).findViewById(textViewId);
+                        textView.setText(String.valueOf(guessedChar));
+                        ((Activity) context).findViewById(R.id.gameHint).setVisibility(View.VISIBLE);
+                        ((Activity) context).findViewById(textViewId).setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        }
+        return newHint.toString();
+    }
+
+
+
+
+
+
+    private boolean isValidInput(String input) {
+        if (input.isEmpty()) {
+            inputLayout.setError("Input cannot be empty");
+            return false;
+        }
+
+        if (!input.matches("[A-Za-z]+")) {
+            inputLayout.setError("Input should contain only letters from A-Z");
+            return false;
+        }
+
+        inputLayout.setError(null);
+
+        // Remove trailing and leading white spaces
+        input = input.trim();
+
+        if (input.length() != randomWord.length()) {
+            Toast.makeText(context, "Input should have the same length as the random word", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isGameOver(String input) {
+        if (input.equalsIgnoreCase(randomWord) || Arrays.equals(dest, randomWord.toCharArray())) {
+            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+            gameWordTextView.setText(randomWord);
+            Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show();
+            return true;
+        } else {
+            if (attempts == maxAttempts) {
+                Toast.makeText(context, "Incorrect! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

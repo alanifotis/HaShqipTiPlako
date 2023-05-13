@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="b6" type="id" />
+    <item name="g1" type="id" />
+    <item name="g2" type="id" />
+    <item name="g3" type="id" />
+    <item name="g4" type="id" />
+    <item name="g5" type="id" />
+    <item name="g6" type="id" />
+    <item name="g7" type="id" />
+    <item name="g8" type="id" />
     <item name="b5" type="id" />
 </resources>
