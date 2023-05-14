@@ -24,25 +24,18 @@ public class GameOnActivity extends AppCompatActivity {
         gameWordTextView.setText(secretWord);
         int i = getIntent().getIntExtra("length", 1);
 
-        for (int k = 0; k < 7; k++) {
+        i = i == 8 ? 10: i+1;
+
+        for (int k = 0; k < i; k++) {
             int hViewId = getResources().getIdentifier("h" + (k+1), "id", getPackageName());
             TextView hTextView = findViewById(hViewId);
-            if (k < i) {
                 hTextView.setVisibility(View.VISIBLE);
-            } else {
-                hTextView.setVisibility(View.INVISIBLE);
-            }
         }
         if (i == 7) {
-            int hViewId = getResources().getIdentifier("h7", "id", getPackageName());
+            int hViewId = getResources().getIdentifier("h8", "id", getPackageName());
             TextView hTextView = findViewById(hViewId);
             hTextView.setVisibility(View.VISIBLE);
         }
-
-
-
-
-
 
         TextInputLayout inputLayout = findViewById(R.id.inputLayout);
         TextInputEditText inputEditText = findViewById(R.id.inputEditText);
