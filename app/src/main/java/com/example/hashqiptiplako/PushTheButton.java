@@ -10,10 +10,6 @@ import java.io.IOException;
 
 
 public class PushTheButton implements View.OnClickListener {
-    private final Button b5;
-    private final Button b6;
-    private final Button b7;
-    private final Button b8;
     private final Context mContext;
     private final GameOnActivity mActivity;
 
@@ -21,10 +17,6 @@ public class PushTheButton implements View.OnClickListener {
     public PushTheButton(Context context, GameOnActivity mActivity, Button b5, Button b6, Button b7, Button b8) {
         this.mContext = context;
         this.mActivity = mActivity;
-        this.b5 = b5;
-        this.b6 = b6;
-        this.b7 = b7;
-        this.b8 = b8;
 
         // Set the click listener for each button to this object
         b5.setOnClickListener(this);
@@ -34,47 +26,15 @@ public class PushTheButton implements View.OnClickListener {
     }
 
     private void launchNewActivity(int i, String word) {
+        int[] qTextViewIds = {R.string.q5, R.string.q6, R.string.q7, R.string.q8};
         Intent intent = new Intent(mContext, GameOnActivity.class);
-        int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
-        String secretWord = mContext.getResources().getString(resourceId);
+        String secretWord = mContext.getResources().getString(qTextViewIds[i - 5]);
         intent.putExtra("secretWord", secretWord);
         intent.putExtra("randomWord", word);
         intent.putExtra("length", i);
         mContext.startActivity(intent);
         mActivity.finish(); // finish the MainActivity to prevent going back to it
     }
-
-
-
-    //String word = RandomWord.selectWord(mContext, i);
-    //TextView secretWordTextView = ((Activity) mContext).findViewById(R.id.gameWord);
-    //int resourceId = mContext.getResources().getIdentifier("q" + i, "string", mContext.getPackageName());
-    //String secretWord = mContext.getResources().getString(resourceId);
-    //secretWordTextView.setText(secretWord);
-    //} catch (IOException e) {
-    //    throw new RuntimeException(e);
-    //}
-    //hideButtons();
-    // Do something with buttonNumber here
-
-    // Get the secret word TextView from the GameOnActivity layout
-    //TextView secretWordTextView = mContext.TextViewfindViewById(R.id.secretWord);
-
-    // Set the secret word text using a string resource ID from game_on.xml
-        /*int resourceId = mActivity.getResources().getIdentifier("q" + currentButtonNumber, "string", mContext.getPackageName());
-        String secretWord = mActivity.getResources().getString(resourceId);
-        secretWordTextView.setText(secretWord);
-
-        // Get the hint TextView from the GameOnActivity layout
-        TextView hintTextView = mActivity.findViewById(R.id.textHint);
-
-        // Set the hint text using a string resource ID from game_on.xml
-        int hintResourceId = mActivity.getResources().getIdentifier("q" + currentButtonNumber + "_hint", "string", mContext.getPackageName());
-        String hint = mActivity.getResources().getString(hintResourceId);
-        hintTextView.setText(hint);
-
-         */
-    //}
 
 
     private static int getButtonNumber(Button button) {
@@ -90,6 +50,7 @@ public class PushTheButton implements View.OnClickListener {
             return -1;
         }
     }
+
 
     @Override
     public void onClick(View view) {

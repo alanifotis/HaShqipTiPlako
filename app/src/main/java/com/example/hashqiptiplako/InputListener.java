@@ -140,23 +140,13 @@ public class InputListener implements TextView.OnEditorActionListener {
             TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
             gameWordTextView.setText(randomWord);
             Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((Activity) context).finish();
-                }
-            }, 3000);
+            new Handler().postDelayed(() -> ((Activity) context).finish(), 3000);
             return true;
         } else if (attempts == maxAttempts) {
                 TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
                 gameWordTextView.setText(randomWord);
                 Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((Activity) context).finish();
-                    }
-                }, 3000);
+            new Handler().postDelayed(() -> ((Activity) context).finish(), 3000);
                 return true;
             }
 
