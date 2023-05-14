@@ -8,13 +8,9 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.util.Arrays;
 
 public class InputListener implements TextView.OnEditorActionListener {
-    private final TextInputLayout inputLayout;
     private final Context context;
     private final String randomWord;
     private final int maxAttempts;
@@ -24,8 +20,7 @@ public class InputListener implements TextView.OnEditorActionListener {
     private final char[] dest;
 
 
-    public InputListener(TextInputLayout inputLayout, Context context, String randomWord, int maxAttempts, int [] hTextViewIds) {
-        this.inputLayout = inputLayout;
+    public InputListener(Context context, String randomWord, int maxAttempts, int [] hTextViewIds) {
         this.context = context;
         this.randomWord = randomWord;
         this.maxAttempts = maxAttempts;
@@ -39,10 +34,10 @@ public class InputListener implements TextView.OnEditorActionListener {
 
     }
 
-    @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_DOWN) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
             // hide the keyboard
+
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
@@ -111,25 +106,13 @@ public class InputListener implements TextView.OnEditorActionListener {
 
 
     private boolean isValidInput(String input) {
-        if (input.isEmpty()) {
-            inputLayout.setError("Input cannot be empty");
+        String regexPattern = "^[a-zA-Z]{" + randomWord.length() + "}$";
+
+        if (!input.matches(regexPattern)) {
+            Toast.makeText(context, "A i Ke Syte Ne Ball?!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (!input.matches("[A-Za-z]+")) {
-            inputLayout.setError("Input should contain only letters from A-Z");
-            return false;
-        }
-
-        inputLayout.setError(null);
-
-        // Remove trailing and leading white spaces
-        input = input.trim();
-
-        if (input.length() != randomWord.length()) {
-            Toast.makeText(context, "Input should have the same length as the random word", Toast.LENGTH_SHORT).show();
-            return false;
-        }
 
         return true;
     }

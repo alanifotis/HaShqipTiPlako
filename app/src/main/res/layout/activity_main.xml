@@ -10,19 +10,19 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="390dp"
-        android:layout_height="303dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="11dp"
-        android:layout_marginBottom="397dp"
+        android:layout_width="373dp"
+        android:layout_height="194dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="560dp"
         android:contentDescription="@string/flag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.037"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/albanian" />
 
     <TextView
@@ -30,9 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
-        android:layout_marginTop="348dp"
         android:layout_marginEnd="75dp"
-        android:layout_marginBottom="343dp"
         android:text="@string/hint"
         android:textAlignment="center"
         android:textColor="@color/red"
@@ -42,85 +40,80 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.19"
         tools:text="@string/hint" />
 
     <Button
         android:id="@id/b5"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="423dp"
-        android:layout_marginEnd="335dp"
-        android:layout_marginBottom="248dp"
+        android:layout_marginBottom="200sp"
         android:background="@drawable/shapes"
         android:text="@string/b5"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/gameHint"
+        app:layout_constraintHorizontal_bias="0.078"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/gameHint"
+        app:layout_constraintVertical_bias="0.291" />
 
     <Button
         android:id="@id/b6"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_marginStart="119dp"
-        android:layout_marginTop="423dp"
-        android:layout_marginEnd="232dp"
-        android:layout_marginBottom="248dp"
+        android:layout_marginBottom="200sp"
         android:background="@drawable/shapes"
         android:text="@string/b6"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/b7"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toEndOf="@+id/b5"
+        app:layout_constraintTop_toBottomOf="@+id/gameHint"
+        app:layout_constraintVertical_bias="0.291" />
 
     <Button
         android:id="@+id/b7"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_marginStart="226dp"
-        android:layout_marginTop="423dp"
-        android:layout_marginEnd="125dp"
-        android:layout_marginBottom="248dp"
+        android:layout_marginBottom="200sp"
         android:background="@drawable/shapes"
         android:text="@string/b7"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/secretWord"
+        app:layout_constraintHorizontal_bias="0.727"
+        app:layout_constraintStart_toStartOf="@+id/secretWord"
+        app:layout_constraintTop_toBottomOf="@+id/gameHint"
+        app:layout_constraintVertical_bias="0.291" />
 
     <Button
         android:id="@+id/b8"
         android:layout_width="60sp"
         android:layout_height="60sp"
-        android:layout_marginStart="335dp"
-        android:layout_marginTop="423dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="248dp"
+        android:layout_marginBottom="200sp"
         android:background="@drawable/shapes"
         android:text="@string/b8"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/gameHint"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/b7"
+        app:layout_constraintTop_toBottomOf="@+id/gameHint"
+        app:layout_constraintVertical_bias="0.291" />
 
     <TextView
         android:id="@+id/secretWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="522dp"
-        android:layout_marginBottom="143dp"
         android:text="@string/secret"
         android:textAlignment="center"
         android:textColor="@color/red"
         android:textSize="50sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/gameHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.5"
         tools:text="@string/secret" />
 
 
