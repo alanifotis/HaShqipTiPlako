@@ -1,6 +1,7 @@
 package com.example.hashqiptiplako;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -134,18 +135,31 @@ public class InputListener implements TextView.OnEditorActionListener {
     }
 
     private boolean isGameOver(String input) {
-        TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
-        gameWordTextView.setText(randomWord);
 
         if (input.equalsIgnoreCase(randomWord) || Arrays.equals(dest, randomWord.toCharArray())) {
+            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+            gameWordTextView.setText(randomWord);
             Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((Activity) context).finish();
+                }
+            }, 3000);
             return true;
-        } else {
-            if (attempts == maxAttempts) {
+        } else if (attempts == maxAttempts) {
+                TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+                gameWordTextView.setText(randomWord);
                 Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((Activity) context).finish();
+                    }
+                }, 3000);
                 return true;
             }
-        }
+
         return false;
     }
 
