@@ -23,23 +23,23 @@ public class GameOnActivity extends AppCompatActivity {
         String secretWord = getIntent().getStringExtra("secretWord");
         gameWordTextView.setText(secretWord);
         int i = getIntent().getIntExtra("length", 1);
+            i = i == 8 ? 10: i+1;
 
-        i = i == 8 ? 10: i+1;
+        int[] hTextViewIds = { R.id.h0, R.id.h1, R.id.h2, R.id.h3, R.id.h4, R.id.h5, R.id.h6, R.id.h7, R.id.h8, R.id.h9 };
 
         for (int k = 0; k < i; k++) {
-            int hViewId = getResources().getIdentifier("h" + (k+1), "id", getPackageName());
-            TextView hTextView = findViewById(hViewId);
-                hTextView.setVisibility(View.VISIBLE);
+            TextView hTextView = findViewById(hTextViewIds[k]);
+            hTextView.setVisibility(View.VISIBLE);
+
         }
         if (i == 7) {
-            int hViewId = getResources().getIdentifier("h8", "id", getPackageName());
-            TextView hTextView = findViewById(hViewId);
-            hTextView.setVisibility(View.VISIBLE);
+            TextView h8TextView = findViewById(R.id.h7);
+            h8TextView.setVisibility(View.VISIBLE);
         }
 
         TextInputLayout inputLayout = findViewById(R.id.inputLayout);
         TextInputEditText inputEditText = findViewById(R.id.inputEditText);
-        InputListener listen = (new InputListener(inputLayout, this, randomWord, i));
+        InputListener listen = (new InputListener(inputLayout, this, randomWord, i, hTextViewIds));
 
         for (int j = 0; j < i; j++) {
             inputEditText.setOnEditorActionListener(listen);

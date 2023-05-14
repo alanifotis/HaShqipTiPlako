@@ -100,7 +100,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/g4"
+        android:id="@+id/g0"
         android:layout_width="40sp"
         android:layout_height="40sp"
         android:layout_marginHorizontal="5sp"
@@ -137,7 +137,7 @@
         app:layout_constraintBottom_toTopOf="@+id/inputLayout"
         app:layout_constraintEnd_toEndOf="@+id/gameHint"
         app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toEndOf="@+id/g8"
+        app:layout_constraintStart_toEndOf="@+id/g4"
         app:layout_constraintTop_toBottomOf="@+id/gameHint"
         app:layout_constraintVertical_bias="0.5" />
 
@@ -184,7 +184,7 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <TextView
-        android:id="@+id/g8"
+        android:id="@+id/g4"
         android:layout_width="40sp"
         android:layout_height="40sp"
         android:layout_marginHorizontal="5sp"
@@ -200,7 +200,7 @@
         app:layout_constraintBottom_toTopOf="@+id/inputLayout"
         app:layout_constraintEnd_toEndOf="@+id/gameHint"
         app:layout_constraintHorizontal_bias="0.02"
-        app:layout_constraintStart_toEndOf="@+id/g4"
+        app:layout_constraintStart_toEndOf="@+id/g0"
         app:layout_constraintTop_toBottomOf="@+id/gameHint"
         app:layout_constraintVertical_bias="0.5" />
 
@@ -268,7 +268,7 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <TextView
-        android:id="@+id/h1"
+        android:id="@+id/h0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="332dp"
@@ -278,6 +278,21 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/h1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="332dp"
+        android:layout_marginBottom="126dp"
+        android:background="@drawable/heart"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0" />
@@ -286,21 +301,6 @@
         android:id="@+id/h2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="332dp"
-        android:layout_marginBottom="126dp"
-        android:background="@drawable/heart"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/h3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginEnd="332dp"
         android:layout_marginBottom="102dp"
         android:background="@drawable/heart"
@@ -309,11 +309,11 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h1"
+        app:layout_constraintTop_toBottomOf="@+id/h0"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/h4"
+        android:id="@+id/h3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="332dp"
@@ -324,11 +324,11 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h2"
+        app:layout_constraintTop_toBottomOf="@+id/h1"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/h5"
+        android:id="@+id/h4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
@@ -342,7 +342,7 @@
         app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <TextView
-        android:id="@+id/h6"
+        android:id="@+id/h5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="366dp"
@@ -352,10 +352,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h4" />
+        app:layout_constraintTop_toBottomOf="@+id/h3" />
 
     <TextView
-        android:id="@+id/h7"
+        android:id="@+id/h6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="366dp"
@@ -366,15 +366,28 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h5"
+        app:layout_constraintTop_toBottomOf="@+id/h4"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/h7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="366dp"
+        android:layout_marginBottom="54dp"
+        android:background="@drawable/heart"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/h5" />
 
     <TextView
         android:id="@+id/h8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="366dp"
-        android:layout_marginBottom="54dp"
+        android:layout_marginEnd="366dp"
+        android:layout_marginBottom="28dp"
         android:background="@drawable/heart"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
@@ -386,19 +399,6 @@
         android:id="@+id/h9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="366dp"
-        android:layout_marginBottom="28dp"
-        android:background="@drawable/heart"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h7" />
-
-    <TextView
-        android:id="@+id/h10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="366dp"
         android:layout_marginBottom="29dp"
         android:background="@drawable/heart"
@@ -406,7 +406,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/h8" />
+        app:layout_constraintTop_toBottomOf="@+id/h7" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

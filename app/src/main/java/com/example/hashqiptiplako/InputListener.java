@@ -19,10 +19,11 @@ public class InputListener implements TextView.OnEditorActionListener {
     private final int maxAttempts;
     private int attempts;
 
+    private final int[] hTextViewIds;
     private final char[] dest;
 
 
-    public InputListener(TextInputLayout inputLayout, Context context, String randomWord, int maxAttempts) {
+    public InputListener(TextInputLayout inputLayout, Context context, String randomWord, int maxAttempts, int [] hTextViewIds) {
         this.inputLayout = inputLayout;
         this.context = context;
         this.randomWord = randomWord;
@@ -30,6 +31,7 @@ public class InputListener implements TextView.OnEditorActionListener {
         this.attempts = 0;
         this.dest = new char[randomWord.length()];
         Arrays.fill(dest, '#');
+        this.hTextViewIds = hTextViewIds;
 
 
 
@@ -60,6 +62,8 @@ public class InputListener implements TextView.OnEditorActionListener {
                 return true;
             } else {
                 Toast.makeText(context, "Incorrect, try again! Attempts left: " + (maxAttempts - attempts), Toast.LENGTH_SHORT).show();
+                TextView hTextView = (((Activity) context).findViewById(hTextViewIds[(maxAttempts - attempts)]));
+                hTextView.setVisibility(View.INVISIBLE);
                 return false;
             }
         }
@@ -68,7 +72,9 @@ public class InputListener implements TextView.OnEditorActionListener {
 
     private String updateGameHint(String input, String randomWord, char[] currentHint) {
         StringBuilder newHint = new StringBuilder();
-        for (int i = 0; i < input.length(); i++) {
+        int rWLength = randomWord.length();
+
+        for (int i = 0; i < rWLength; i++) {
             char guessedChar = input.charAt(i);
             if (guessedChar == randomWord.charAt(i)) {
                 // Guessed character is correct, so show it in the game word
@@ -83,14 +89,14 @@ public class InputListener implements TextView.OnEditorActionListener {
                 // Guessed character is incorrect, so hide it with a '#'
                 newHint.append('#');
                 // Check if the guessed character is present in the random word
-                for (int j = 0; j < randomWord.length(); j++) {
+                for (int j = 0; j < rWLength; j++) {
                     if (guessedChar == randomWord.charAt(j)) {
                         // Guessed character is present in the random word, so make the corresponding TextView visible
-                        int textViewId = context.getResources().getIdentifier("g" + (j+1), "id", context.getPackageName());
-                        TextView textView = ((Activity) context).findViewById(textViewId);
+                        int[] gTextViewIds = { R.id.g0, R.id.g1, R.id.g2, R.id.g3, R.id.g4, R.id.g5, R.id.g6, R.id.g7};
+                        TextView textView = ((Activity) context).findViewById(gTextViewIds[j]);
                         textView.setText(String.valueOf(guessedChar));
                         ((Activity) context).findViewById(R.id.gameHint).setVisibility(View.VISIBLE);
-                        ((Activity) context).findViewById(textViewId).setVisibility(View.VISIBLE);
+                        ((Activity) context).findViewById(gTextViewIds[j]).setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -128,14 +134,15 @@ public class InputListener implements TextView.OnEditorActionListener {
     }
 
     private boolean isGameOver(String input) {
+        TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+        gameWordTextView.setText(randomWord);
+
         if (input.equalsIgnoreCase(randomWord) || Arrays.equals(dest, randomWord.toCharArray())) {
-            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
-            gameWordTextView.setText(randomWord);
-            Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
             return true;
         } else {
             if (attempts == maxAttempts) {
-                Toast.makeText(context, "Incorrect! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
                 return true;
             }
         }
