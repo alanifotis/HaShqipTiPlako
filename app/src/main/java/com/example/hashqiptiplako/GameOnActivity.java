@@ -1,6 +1,8 @@
 package com.example.hashqiptiplako;
 
+
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,11 +24,31 @@ public class GameOnActivity extends AppCompatActivity {
         gameWordTextView.setText(secretWord);
         int i = getIntent().getIntExtra("length", 1);
 
+        for (int k = 0; k < 7; k++) {
+            int hViewId = getResources().getIdentifier("h" + (k+1), "id", getPackageName());
+            TextView hTextView = findViewById(hViewId);
+            if (k < i) {
+                hTextView.setVisibility(View.VISIBLE);
+            } else {
+                hTextView.setVisibility(View.INVISIBLE);
+            }
+        }
+        if (i == 7) {
+            int hViewId = getResources().getIdentifier("h7", "id", getPackageName());
+            TextView hTextView = findViewById(hViewId);
+            hTextView.setVisibility(View.VISIBLE);
+        }
+
+
+
+
+
+
         TextInputLayout inputLayout = findViewById(R.id.inputLayout);
         TextInputEditText inputEditText = findViewById(R.id.inputEditText);
-        InputListener listen = (new InputListener(inputLayout, this, randomWord, i + 1));
+        InputListener listen = (new InputListener(inputLayout, this, randomWord, i));
 
-        for (int j = 0; j < (i+1); j++) {
+        for (int j = 0; j < i; j++) {
             inputEditText.setOnEditorActionListener(listen);
         }
     }
