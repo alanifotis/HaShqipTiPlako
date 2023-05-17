@@ -10,111 +10,85 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="373dp"
-        android:layout_height="194dp"
+        android:layout_width="387dp"
+        android:layout_height="276dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="560dp"
         android:contentDescription="@string/flag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.10"
         app:srcCompat="@drawable/albanian" />
 
     <TextView
-        android:id="@+id/gameHint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
-        android:layout_marginEnd="75dp"
+        android:id="@+id/overHint"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         android:text="@string/hint"
         android:textAlignment="center"
         android:textColor="@color/red"
-        android:textSize="30sp"
+        android:textSize="40sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.19"
+        app:layout_constraintWidth_default="wrap"
+        app:layout_constraintWidth_max="wrap"
+        app:layout_constraintWidth_min="wrap"
         tools:text="@string/hint" />
 
-    <Button
-        android:id="@id/b5"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:layout_marginBottom="200sp"
-        android:background="@drawable/shapes"
-        android:text="@string/b5"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/gameHint"
-        app:layout_constraintHorizontal_bias="0.078"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/gameHint"
-        app:layout_constraintVertical_bias="0.291" />
-
-    <Button
-        android:id="@id/b6"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:layout_marginBottom="200sp"
-        android:background="@drawable/shapes"
-        android:text="@string/b6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/b7"
-        app:layout_constraintHorizontal_bias="0.506"
-        app:layout_constraintStart_toEndOf="@+id/b5"
-        app:layout_constraintTop_toBottomOf="@+id/gameHint"
-        app:layout_constraintVertical_bias="0.291" />
-
-    <Button
-        android:id="@+id/b7"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:layout_marginBottom="200sp"
-        android:background="@drawable/shapes"
-        android:text="@string/b7"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/secretWord"
-        app:layout_constraintHorizontal_bias="0.727"
-        app:layout_constraintStart_toStartOf="@+id/secretWord"
-        app:layout_constraintTop_toBottomOf="@+id/gameHint"
-        app:layout_constraintVertical_bias="0.291" />
-
-    <Button
-        android:id="@+id/b8"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:layout_marginBottom="200sp"
-        android:background="@drawable/shapes"
-        android:text="@string/b8"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/gameHint"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/b7"
-        app:layout_constraintTop_toBottomOf="@+id/gameHint"
-        app:layout_constraintVertical_bias="0.291" />
-
-    <TextView
-        android:id="@+id/secretWord"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/line"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/secret"
-        android:textAlignment="center"
-        android:textColor="@color/red"
-        android:textSize="50sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/gameHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.5"
-        tools:text="@string/secret" />
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/overHint"
+        app:layout_constraintStart_toStartOf="@+id/overHint"
+        app:layout_constraintTop_toBottomOf="@+id/overHint">
+
+        <Button
+            android:id="@id/b5"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_margin="20sp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes"
+            android:text="@string/b5" />
+
+        <Button
+            android:id="@id/b6"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_margin="20sp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes"
+            android:text="@string/b6" />
+
+        <Button
+            android:id="@+id/b7"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_margin="20sp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes"
+            android:text="@string/b7" />
+
+        <Button
+            android:id="@+id/b8"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_margin="20sp"
+            android:layout_weight="1"
+            android:background="@drawable/shapes"
+            android:text="@string/b8" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

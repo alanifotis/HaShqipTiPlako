@@ -91,7 +91,7 @@ public class InputListener implements TextView.OnEditorActionListener {
                         int[] gTextViewIds = { R.id.g0, R.id.g1, R.id.g2, R.id.g3, R.id.g4, R.id.g5, R.id.g6, R.id.g7};
                         TextView textView = ((Activity) context).findViewById(gTextViewIds[j]);
                         textView.setText(String.valueOf(guessedChar));
-                        ((Activity) context).findViewById(R.id.gameHint).setVisibility(View.VISIBLE);
+                        ((Activity) context).findViewById(R.id.overHint).setVisibility(View.VISIBLE);
                         ((Activity) context).findViewById(gTextViewIds[j]).setVisibility(View.VISIBLE);
                     }
                 }
