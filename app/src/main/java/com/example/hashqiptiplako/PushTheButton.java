@@ -18,6 +18,8 @@ public class PushTheButton implements View.OnClickListener {
         this.mContext = context;
         this.mActivity = mActivity;
 
+
+
         // Set the click listener for each button to this object
         b5.setOnClickListener(this);
         b6.setOnClickListener(this);
@@ -25,12 +27,12 @@ public class PushTheButton implements View.OnClickListener {
         b8.setOnClickListener(this);
     }
 
-    private void launchNewActivity(int i, String word) {
+    public static void launchNewGameOnActivity(int i, String randomWord, Context mContext, GameOnActivity mActivity) {
         int[] qTextViewIds = {R.string.q5, R.string.q6, R.string.q7, R.string.q8};
         Intent intent = new Intent(mContext, GameOnActivity.class);
         String secretWord = mContext.getResources().getString(qTextViewIds[i - 5]);
         intent.putExtra("secretWord", secretWord);
-        intent.putExtra("randomWord", word);
+        intent.putExtra("randomWord", randomWord);
         intent.putExtra("length", i);
         mContext.startActivity(intent);
         mActivity.finish(); // finish the MainActivity to prevent going back to it
@@ -58,34 +60,10 @@ public class PushTheButton implements View.OnClickListener {
         int i = getButtonNumber(button);
         try {
             String word = RandomWord.selectWord(mContext, i);
-            launchNewActivity(i, word);
+            launchNewGameOnActivity(i, word, mContext, mActivity);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 }
 
-    /* private void hideButtons() {
-        b5.setVisibility(View.GONE);
-        b6.setVisibility(View.GONE);
-        b7.setVisibility(View.GONE);
-        b8.setVisibility(View.GONE);
-        TextView hint = ((MainActivity) mContext).findViewById(R.id.textHint);
-        hint.setVisibility(View.GONE);
-    }*/
-
-
-
-
-
-
-    /*public int getSize() {
-        // Assuming that the size is determined by the number of visible buttons
-        int size = 0;
-        if (b5.getVisibility() == View.VISIBLE) size++;
-        if (b6.getVisibility() == View.VISIBLE) size++;
-        if (b7.getVisibility() == View.VISIBLE) size++;
-        if (b8.getVisibility() == View.VISIBLE) size++;
-        return size;
-    }
-}*/

@@ -17,4 +17,11 @@
     <string name="q8">########</string>
     <string name="inputHint">Gjeje pra: </string>
     <string name="incorrectPlace">Po kjo ku e ka vendin plako!?</string>
+    <string name="loser_1">Congratulation loser!</string>
+    <string name="loser_2">You lost again!</string>
+    <string name="winner_1">Genius!</string>
+    <string name="winner_2">You did it again!</string>
+    <string name="settings">Settings</string>
+    <string name="reset">Play Again</string>
+    <string name="restart">Main menu</string>
 </resources>

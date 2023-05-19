@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         new PushTheButton(this, game, b5, b6, b7, b8);
-        //launchNewActivity();
+
     }
 
 }

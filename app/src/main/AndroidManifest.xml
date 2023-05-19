@@ -24,5 +24,8 @@
         <activity
             android:name=".GameOnActivity"
             android:exported="true"></activity>
+        <activity
+            android:name=".GameOver"
+            android:exported="true"></activity>
     </application>
 </manifest>

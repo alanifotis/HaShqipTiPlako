@@ -1,6 +1,7 @@
 package com.example.hashqiptiplako;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,7 +36,7 @@ public class InputListener implements TextView.OnEditorActionListener {
     }
 
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
+        if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
             // hide the keyboard
 
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -120,20 +121,30 @@ public class InputListener implements TextView.OnEditorActionListener {
     private boolean isGameOver(String input) {
 
         if (input.equalsIgnoreCase(randomWord) || Arrays.equals(dest, randomWord.toCharArray())) {
+            String status = "winner";
             TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
             gameWordTextView.setText(randomWord);
             Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(() -> ((Activity) context).finish(), 3000);
+            new Handler().postDelayed(() -> launchNewActivity(status), 3000);
             return true;
         } else if (attempts == maxAttempts) {
+                String status = "loser";
                 TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
                 gameWordTextView.setText(randomWord);
                 Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
-            new Handler().postDelayed(() -> ((Activity) context).finish(), 3000);
+                new Handler().postDelayed(() -> launchNewActivity(status), 3000);
                 return true;
             }
 
         return false;
+    }
+
+    private void launchNewActivity(String status) {
+        Intent intent = new Intent(context, GameOver.class);
+        intent.putExtra("length", randomWord.length());
+        intent.putExtra("status", status);
+        context.startActivity(intent);
+        ((Activity) context).finish(); // finish this Activity to prevent going back to it
     }
 
 }
