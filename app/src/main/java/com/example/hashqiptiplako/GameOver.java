@@ -49,9 +49,7 @@ public class GameOver extends AppCompatActivity implements View.OnClickListener 
         int i = getIntent().getIntExtra("length", 5);
 
         int id = view.getId();
-        if (id == R.id.settings) {
-            // Handle settings button click
-        } else if (id == R.id.reset) {
+        if (id == R.id.reset) {
             try {
                 GameOnActivity game = new GameOnActivity();
                 String randomWord = RandomWord.selectWord(this, i);
@@ -59,17 +57,19 @@ public class GameOver extends AppCompatActivity implements View.OnClickListener 
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-
-            // Handle reset button click
         } else if (id == R.id.restart) {
             // Handle restart button click
             Intent intent = new Intent(this, MainActivity.class);
             this.startActivity(intent);
-            ((Activity) this).finish();
-        } else {
-            // Handle any other button clicks
+            this.finish();
+        } else if (id == R.id.settings) {
+            // Handle settings button click
+            Intent intent = new Intent(this, Settings.class);
+            this.startActivity(intent);
+            this.finish();
         }
     }
+
 
 
 
