@@ -5,7 +5,6 @@
     android:id="@+id/mainFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
     tools:context=".MainActivity">
 
     <ImageView
@@ -18,29 +17,26 @@
         android:contentDescription="@string/flag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.10"
+        app:layout_constraintVertical_bias="0.062"
         app:srcCompat="@drawable/albanian" />
 
     <TextView
         android:id="@+id/overHint"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/hint"
         android:textAlignment="center"
         android:textColor="@color/red"
         android:textSize="40sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btnPair"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintWidth_default="wrap"
-        app:layout_constraintWidth_max="wrap"
-        app:layout_constraintWidth_min="wrap"
+        app:layout_constraintVertical_bias="0.040"
         tools:text="@string/hint" />
 
     <LinearLayout
@@ -60,7 +56,8 @@
             android:layout_margin="20sp"
             android:layout_weight="1"
             android:background="@drawable/shapes"
-            android:text="@string/b5" />
+            android:text="@string/b5"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@id/b6"
@@ -69,7 +66,8 @@
             android:layout_margin="20sp"
             android:layout_weight="1"
             android:background="@drawable/shapes"
-            android:text="@string/b6" />
+            android:text="@string/b6"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/b7"
@@ -78,7 +76,8 @@
             android:layout_margin="20sp"
             android:layout_weight="1"
             android:background="@drawable/shapes"
-            android:text="@string/b7" />
+            android:text="@string/b7"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/b8"
@@ -87,23 +86,24 @@
             android:layout_margin="20sp"
             android:layout_weight="1"
             android:background="@drawable/shapes"
-            android:text="@string/b8" />
+            android:text="@string/b8"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 
     <Button
         android:id="@+id/btnPair"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pair"
-        android:onClick="pairWithDevice"
+        android:background="@drawable/rounded"
+        android:onClick="multiplayerLayout"
+        android:text="@string/multiplayer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.832" />
-
-
+        app:layout_constraintVertical_bias="0.765"
+        android:textColor="#FFFFFF" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
