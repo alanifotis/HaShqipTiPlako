@@ -27,5 +27,6 @@
     <string name="startGameButtonLabel">Start Game</string>
     <string name="multiplayer">multiplayer</string>
     <string name="username">Username: </string>
-    username
+    <string name="waiting">Waiting for other players to join 😩😩</string>
+    <string name="life_seconds_lost">Life seconds lost %d 😩😩</string>
 </resources>

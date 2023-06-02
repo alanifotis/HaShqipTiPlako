@@ -1,28 +1,32 @@
 package com.example.hashqiptiplako;
 
+import static com.example.hashqiptiplako.PushTheButton.launchNewGameOnActivity;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Multiplayer extends AppCompatActivity {
 
@@ -30,11 +34,63 @@ public class Multiplayer extends AppCompatActivity {
     private Handler handler;
     private Runnable toastRunnable;
 
+    private String username = "";
+    private String playerId = "";
+    private final Random random = new Random();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.username);
 
+        File file = new File(getFilesDir(), "user_data.csv");
+        if (file.exists()) {
+            try {
+                FileInputStream fileInputStream = openFileInput("user_data.csv");
+                Scanner scanner = new Scanner(fileInputStream);
+
+                // Skip the header line
+                scanner.nextLine();
+
+                // Read the first (and only) data line
+                if (scanner.hasNextLine()) {
+                    String dataLine = scanner.nextLine();
+
+                    // Split the data line into fields
+                    String[] fields = dataLine.split(",");
+
+                    if (fields.length >= 1) {
+                        // Extract the username
+                        username = fields[0];
+                        playerId = fields[1];
+                    }
+
+                    Map<String, Object> player = new HashMap<>();
+                    player.put("username", username);
+                    player.put("playerId", playerId);
+
+                    // Save the player information to Firebase Realtime Database
+                    DatabaseReference playersRef = FirebaseDatabase.getInstance().getReference("players");
+                    playersRef.child(playerId).setValue(player);
+
+                    // Proceed to the waiting room or start the game directly
+                    joinWaitingRoom(playerId);
+                }
+
+                // Close the streams
+                scanner.close();
+                fileInputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // The file does not exist, prompt the user for a username
+            userName();
+        }
+
+    }
+
+    public void userName() {
         inputEditText = findViewById(R.id.inputEditText);
         Button startGameButton = findViewById(R.id.startGameButton);
 
@@ -80,7 +136,7 @@ public class Multiplayer extends AppCompatActivity {
         String characters = "abcdefghijklmnopqrstuvwxyz0123456789!@%^&*()";
         StringBuilder playerId = new StringBuilder();
 
-        Random random = new Random();
+
         for (int i = 0; i < 5; i++) {
             int index = random.nextInt(characters.length());
             playerId.append(characters.charAt(index));
@@ -90,9 +146,12 @@ public class Multiplayer extends AppCompatActivity {
     }
 
     private void joinWaitingRoom(String playerId) {
+        findViewById(R.id.inputEditText).setVisibility(View.INVISIBLE);
+        findViewById(R.id.inputLayout).setVisibility(View.INVISIBLE);
+        findViewById(R.id.startGameButton).setVisibility(View.INVISIBLE);
+        findViewById(R.id.waitingText).setVisibility(View.VISIBLE);
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference waitingRoomRef = database.getReference("waitingRoom");
+        DatabaseReference waitingRoomRef =  FirebaseDatabase.getInstance().getReference("waitingRoom");
 
         // Create a player object with their information
         Map<String, Object> player = new HashMap<>();
@@ -109,18 +168,24 @@ public class Multiplayer extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference waitingRoomRef = database.getReference("waitingRoom");
 
-        // Create a handler to schedule the toast message
+        // Declare 'count' variable as final
+        final int[] count = {0};
+
+        // Create a handler to schedule the count update
         handler = new Handler();
-        toastRunnable = new Runnable() {
+        Runnable countRunnable = new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(Multiplayer.this, "Waiting for other players to join", Toast.LENGTH_SHORT).show();
-                handler.postDelayed(this, 9000); // Repeat the toast message every 5 seconds
+                count[0]++;
+                TextView countTextView = findViewById(R.id.count);
+                countTextView.setVisibility(View.VISIBLE);
+                countTextView.setText(getString(R.string.life_seconds_lost, count[0]));
+                handler.postDelayed(this, 1000); // Repeat the count update every 1 second
             }
         };
 
-        // Start displaying the toast message
-        handler.postDelayed(toastRunnable, 9000);
+        // Start the count update
+        handler.postDelayed(countRunnable, 1000);
 
         // Listen for changes in the number of players in the waiting room
         waitingRoomRef.addValueEventListener(new ValueEventListener() {
@@ -128,11 +193,13 @@ public class Multiplayer extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long playerCount = dataSnapshot.getChildrenCount();
                 if (playerCount >= 2) {
-                    // At least two players are in the waiting room, stop displaying the toast message
-                    handler.removeCallbacks(toastRunnable);
-                    startGame();
-                } else {
-                    // No players in the waiting room, update UI accordingly
+                    // At least two players are in the waiting room, stop the count update
+                    handler.removeCallbacks(countRunnable);
+                    try {
+                        startGame();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -143,8 +210,21 @@ public class Multiplayer extends AppCompatActivity {
         });
     }
 
-    private void startGame() {
-        // Game logic here
+
+
+
+    private void startGame() throws IOException {
+        int i = random.nextInt(4) + 5;
+        GameOnActivity game = new GameOnActivity();
+        String word = RandomWord.selectWord(this, i);
+        DatabaseReference secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
+        Map<String, Object> wordData = new HashMap<>();
+        wordData.put("word", word);
+        wordData.put("length", i);
+
+        secretWordRef.setValue(wordData);
+
+        launchNewGameOnActivity(i, word, this, game);
     }
 
 
