@@ -6,8 +6,10 @@ import android.view.View;
 import android.widget.Button;
 import android.content.Context;
 
-import java.io.IOException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 
 public class PushTheButton implements View.OnClickListener {
     private final Context mContext;
@@ -28,15 +30,28 @@ public class PushTheButton implements View.OnClickListener {
     }
 
     public static void launchNewGameOnActivity(int i, String randomWord, Context mContext, GameOnActivity mActivity) {
+        launchNewGameOnActivity(i, randomWord, mContext, mActivity, false);
+    }
+
+    public static void launchNewGameOnActivity(int i, String randomWord, Context mContext, GameOnActivity mActivity, boolean multiPlayer) {
+
         int[] qTextViewIds = {R.string.q5, R.string.q6, R.string.q7, R.string.q8};
         Intent intent = new Intent(mContext, GameOnActivity.class);
         String secretWord = mContext.getResources().getString(qTextViewIds[i - 5]);
+
+        if (multiPlayer){
+            DatabaseReference secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
+            secretWordRef.child("camouflage").setValue(secretWord);
+        }
+
         intent.putExtra("secretWord", secretWord);
         intent.putExtra("randomWord", randomWord);
         intent.putExtra("length", i);
+        intent.putExtra("isMultiplayer", multiPlayer);
         mContext.startActivity(intent);
         mActivity.finish(); // finish the MainActivity to prevent going back to it
     }
+
 
 
     private static int getButtonNumber(Button button) {

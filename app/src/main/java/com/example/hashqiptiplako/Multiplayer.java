@@ -6,18 +6,24 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,8 +38,6 @@ public class Multiplayer extends AppCompatActivity {
 
     private EditText inputEditText;
     private Handler handler;
-    private Runnable toastRunnable;
-
     private String username = "";
     private String playerId = "";
     private final Random random = new Random();
@@ -95,42 +99,62 @@ public class Multiplayer extends AppCompatActivity {
         Button startGameButton = findViewById(R.id.startGameButton);
 
 
+        // Set OnEditorActionListener for the inputEditText
+        inputEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                // Hide the keyboard
+                InputMethodManager imm = (InputMethodManager) Multiplayer.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+                // Validate input
+                validateInput();
+                return true; // Return true to consume the event
+            }
+            return false; // Return false to allow default handling of the event
+        });
+
+
+
 
         startGameButton.setOnClickListener(v -> {
-            String username = inputEditText.getText().toString().trim();
+
+            // hide the keyboard
+            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
             // Validate input
-            if (TextUtils.isEmpty(username) || username.length() < 5) {
-                Toast.makeText(Multiplayer.this, "Username should contain at least 5 characters", Toast.LENGTH_SHORT).show();
-            } else {
-                // Generate a unique player ID
-                String playerId = generatePlayerId();
-
-                saveUsernameToFile(username, playerId);
-
-                // Create a player object with their information
-                Map<String, Object> player = new HashMap<>();
-                player.put("username", username);
-                player.put("playerId", playerId);
-
-                // Save the player information to Firebase Realtime Database
-                DatabaseReference playersRef = FirebaseDatabase.getInstance().getReference("players");
-                playersRef.child(playerId).setValue(player);
-
-                // Proceed to the waiting room or start the game directly
-                joinWaitingRoom(playerId);
-            }
-        });
+            validateInput();
+            });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Stop displaying the toast message when the activity is destroyed
-        if (handler != null && toastRunnable != null) {
-            handler.removeCallbacks(toastRunnable);
+    // Validate input method
+    private void validateInput() {
+        String username = inputEditText.getText().toString().trim();
+
+        // Validate input
+        if (TextUtils.isEmpty(username) || username.length() < 5) {
+            Toast.makeText(Multiplayer.this, "Username should contain at least 5 characters", Toast.LENGTH_SHORT).show();
+        } else {
+            // Proceed with the validated input
+            // Generate a unique player ID
+            String playerId = generatePlayerId();
+
+            saveUsernameToFile(username, playerId);
+
+            // Create a player object with their information
+            Map<String, Object> player = new HashMap<>();
+            player.put("username", username);
+            player.put("playerId", playerId);
+
+            // Save the player information to Firebase Realtime Database
+            DatabaseReference playersRef = FirebaseDatabase.getInstance().getReference("players");
+            playersRef.child(playerId).setValue(player);
+
+            // Proceed to the waiting room or start the game directly
+            joinWaitingRoom(playerId);
         }
     }
+
 
     private String generatePlayerId() {
         String characters = "abcdefghijklmnopqrstuvwxyz0123456789!@%^&*()";
@@ -196,7 +220,10 @@ public class Multiplayer extends AppCompatActivity {
                     // At least two players are in the waiting room, stop the count update
                     handler.removeCallbacks(countRunnable);
                     try {
+                        // Initiate the game
                         startGame();
+                        // Move players from waiting room to playing room
+                        movePlayersToPlayingRoom(dataSnapshot);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -214,18 +241,17 @@ public class Multiplayer extends AppCompatActivity {
 
 
     private void startGame() throws IOException {
-        int i = random.nextInt(4) + 5;
         GameOnActivity game = new GameOnActivity();
+        int i = random.nextInt(4) + 5;
         String word = RandomWord.selectWord(this, i);
         DatabaseReference secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
         Map<String, Object> wordData = new HashMap<>();
         wordData.put("word", word);
         wordData.put("length", i);
-
         secretWordRef.setValue(wordData);
-
-        launchNewGameOnActivity(i, word, this, game);
+        launchNewGameOnActivity( i, word, this, game, true);
     }
+
 
 
     private void saveUsernameToFile(String username, String playerId) {
@@ -246,4 +272,19 @@ public class Multiplayer extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    // Helper method to move players from waiting room to playing room
+    private void movePlayersToPlayingRoom(DataSnapshot dataSnapshot) {
+        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
+        DatabaseReference waitingRoomRef = FirebaseDatabase.getInstance().getReference("waitingRoom");
+
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String playerId = snapshot.getKey();
+            // Move player to playingRoom
+            playingRoomRef.child(playerId).setValue(true);
+            // Remove player from waitingRoom
+            waitingRoomRef.child(playerId).removeValue();
+        }
+    }
+
 }

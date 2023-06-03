@@ -5,42 +5,109 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class GameOnActivity extends AppCompatActivity {
+    private ValueEventListener secretWordListener;
+    private DatabaseReference secretWordRef;
+    private String randomWord = "";
+    private String secretWord = "";
+    private int length = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_on);
+
+        boolean isMultiplayer = getIntent().getBooleanExtra("isMultiplayer", false);
+
+        if (isMultiplayer) {
+            secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
+
+            secretWordListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    randomWord = dataSnapshot.child("word").getValue(String.class);
+                    secretWord = dataSnapshot.child("camouflage").getValue(String.class);
+                    length = dataSnapshot.child("length").getValue(Integer.class);
+                    initializeGame();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle database error
+                }
+            };
+        } else {
+            randomWord = getIntent().getStringExtra("randomWord");
+            secretWord = getIntent().getStringExtra("secretWord");
+            length = getIntent().getIntExtra("length", 5);
+            initializeGame();
+        }
+    }
+
+    private void initializeGame() {
         TextView gameWordTextView = findViewById(R.id.gameWord);
-        String randomWord = getIntent().getStringExtra("randomWord");
-        String secretWord = getIntent().getStringExtra("secretWord");
         gameWordTextView.setText(secretWord);
-        int i = getIntent().getIntExtra("length", 1);
-            i = i == 8 ? 10: i+1;
 
-        int[] hTextViewIds = { R.id.h0, R.id.h1, R.id.h2, R.id.h3, R.id.h4, R.id.h5, R.id.h6, R.id.h7, R.id.h8, R.id.h9 };
+        int[] hTextViewIds = {R.id.h0, R.id.h1, R.id.h2, R.id.h3, R.id.h4, R.id.h5, R.id.h6, R.id.h7, R.id.h8, R.id.h9};
 
-        for (int k = 0; k < i; k++) {
-            TextView hTextView = findViewById(hTextViewIds[k]);
-            hTextView.setVisibility(View.VISIBLE);
+        DatabaseReference lengthRef = FirebaseDatabase.getInstance().getReference("secretWord/length");
+        lengthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                length = dataSnapshot.getValue(Integer.class);
+                length = length == 8 ? 10 : length + 1;
 
+                for (int k = 0; k < length; k++) {
+                    TextView hTextView = findViewById(hTextViewIds[k]);
+                    hTextView.setVisibility(View.VISIBLE);
+                }
+
+                if (length == 7) {
+                    TextView h8TextView = findViewById(R.id.h7);
+                    h8TextView.setVisibility(View.VISIBLE);
+                }
+
+                TextInputLayout inputLayout = findViewById(R.id.inputLayout);
+                TextInputEditText inputEditText = inputLayout.findViewById(R.id.inputEditText);
+                InputListener listen = new InputListener(GameOnActivity.this, randomWord, length, hTextViewIds);
+
+                for (int j = 0; j < length; j++) {
+                    inputEditText.setOnEditorActionListener(listen);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (secretWordListener != null) {
+            secretWordRef.addValueEventListener(secretWordListener);
         }
-        if (i == 7) {
-            TextView h8TextView = findViewById(R.id.h7);
-            h8TextView.setVisibility(View.VISIBLE);
-        }
+    }
 
-        TextInputLayout inputLayout = findViewById(R.id.inputLayout);
-        TextInputEditText inputEditText = inputLayout.findViewById(R.id.inputEditText);
-        InputListener listen = (new InputListener(this, randomWord, i, hTextViewIds));
-
-        for (int j = 0; j < i; j++) {
-            inputEditText.setOnEditorActionListener(listen);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (secretWordListener != null) {
+            secretWordRef.removeEventListener(secretWordListener);
         }
     }
 }
+
