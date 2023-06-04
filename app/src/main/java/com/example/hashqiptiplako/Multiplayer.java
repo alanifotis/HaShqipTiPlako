@@ -215,6 +215,8 @@ public class Multiplayer extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 long playerCount = dataSnapshot.getChildrenCount();
+                TextView countingTextView = findViewById(R.id.counting);
+
                 if (playerCount >= 2) {
                     // At least two players are in the waiting room, stop the count update
                     handler.removeCallbacks(countRunnable);
@@ -229,6 +231,20 @@ public class Multiplayer extends AppCompatActivity {
                             throw new RuntimeException(e);
                         }
                     }, 6000); // Delay of 6000 milliseconds (6 seconds)
+                    // Display the countdown on the screen
+                    countingTextView.setVisibility(View.VISIBLE);
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 5"), 0); // Delay of 0 milliseconds
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 4"), 1000); // Delay of 1000 milliseconds (1 second)
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 3"), 2000); // Delay of 2000 milliseconds (2 seconds)
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 2"), 3000); // Delay of 3000 milliseconds (3 seconds)
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 1"), 4000); // Delay of 4000 milliseconds (4 seconds)
+
+                    new Handler().postDelayed(() -> countingTextView.setText("Good luck \uD83C\uDF40\uD83E\uDD1E"), 5000); // Delay of 5000 milliseconds (5 seconds)
                 }
             }
 

@@ -29,4 +29,5 @@
     <string name="username">Username: </string>
     <string name="waiting">Waiting for other players to join 😩😩</string>
     <string name="life_seconds_lost">Life seconds lost %d 😩😩</string>
+    <string name="counting">%d</string>
 </resources>

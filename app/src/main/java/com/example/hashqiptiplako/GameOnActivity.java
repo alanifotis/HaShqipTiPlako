@@ -71,7 +71,12 @@ public class GameOnActivity extends AppCompatActivity {
         lengthRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                length = dataSnapshot.getValue(Integer.class);
+                if (isMultiPlayer) {
+                    length = dataSnapshot.getValue(Integer.class);
+                } else {
+                    length = getIntent().getIntExtra("length", 5);
+                }
+
                 length = length == 8 ? 10 : length + 1;
 
                 for (int k = 0; k < length; k++) {

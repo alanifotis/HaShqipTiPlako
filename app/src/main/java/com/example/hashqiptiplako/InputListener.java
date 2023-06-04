@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -29,7 +28,7 @@ public class InputListener implements TextView.OnEditorActionListener {
     private final int[] hTextViewIds;
     private final char[] dest;
 
-    private boolean multiPlayer;
+    private final boolean multiPlayer;
 
 
 
@@ -202,29 +201,15 @@ public class InputListener implements TextView.OnEditorActionListener {
             new Handler().postDelayed(() -> Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show(), 3000);
         }
 
-        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
+        FirebaseDatabase.getInstance().getReference("playingRoom").removeValue();
         FirebaseDatabase.getInstance().getReference("secretWord").removeValue();
+        FirebaseDatabase.getInstance().getReference("multiplayerGameStatus").removeValue();
 
-        playingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String playerId = snapshot.getKey();
-                    // Remove player from playingRoom
-                    playingRoomRef.child(playerId).removeValue();
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle error
-            }
-        });
         // Launch the game over activity for the other player with the corresponding status
         String otherStatus = status.equalsIgnoreCase("winner") ? "loser" : "winner";
         launchNewActivity(otherStatus);
+
+
     }
 
 }
