@@ -9,19 +9,31 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Arrays;
 
 public class InputListener implements TextView.OnEditorActionListener {
-    private final Context context;
-    private final String randomWord;
+    private static Context context;
+    private static String randomWord;
     private final int maxAttempts;
     private int attempts;
 
     private final int[] hTextViewIds;
     private final char[] dest;
 
+    private boolean multiPlayer;
 
-    public InputListener(Context context, String randomWord, int maxAttempts, int [] hTextViewIds) {
+
+
+    public InputListener(Context context, String randomWord, int maxAttempts, int [] hTextViewIds, boolean multiplayer) {
         this.context = context;
         this.randomWord = randomWord;
         this.maxAttempts = maxAttempts;
@@ -29,9 +41,7 @@ public class InputListener implements TextView.OnEditorActionListener {
         this.dest = new char[randomWord.length()];
         Arrays.fill(dest, '#');
         this.hTextViewIds = hTextViewIds;
-
-
-
+        this.multiPlayer = multiplayer;
 
     }
 
@@ -55,7 +65,7 @@ public class InputListener implements TextView.OnEditorActionListener {
 
             attempts++;
 
-            if (isGameOver(input)) {
+            if (isGameOver(input, multiPlayer)) {
                 return true;
             } else {
                 Toast.makeText(context, "Incorrect, try again! Attempts left: " + (maxAttempts - attempts), Toast.LENGTH_SHORT).show();
@@ -113,38 +123,108 @@ public class InputListener implements TextView.OnEditorActionListener {
             Toast.makeText(context, "A i Ke Syte Ne Ball?!", Toast.LENGTH_SHORT).show();
             return false;
         }
-
-
         return true;
     }
 
-    private boolean isGameOver(String input) {
-
+    private boolean isGameOver(String input, boolean multiPlayer) {
         if (input.equalsIgnoreCase(randomWord) || Arrays.equals(dest, randomWord.toCharArray())) {
-            String status = "winner";
-            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
-            gameWordTextView.setText(randomWord);
-            Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
-            new Handler().postDelayed(() -> launchNewActivity(status), 3000);
+            if (multiPlayer) {
+                updateGameStatus("winner");
+                launchNewActivity("winner");
+            } else {
+                String status = "winner";
+                TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+                gameWordTextView.setText(randomWord);
+                Toast.makeText(context, "Correct! You Won!!", Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(() -> launchNewActivity(status), 3000);
+            }
             return true;
         } else if (attempts == maxAttempts) {
+            if (multiPlayer) {
+                updateGameStatus("loser");
+                launchNewActivity("loser");
+            } else {
                 String status = "loser";
                 TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
                 gameWordTextView.setText(randomWord);
                 Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show();
                 new Handler().postDelayed(() -> launchNewActivity(status), 3000);
-                return true;
             }
+            return true;
+        }
 
         return false;
     }
 
-    private void launchNewActivity(String status) {
+    private void updateGameStatus(String status) {
+        // Update the game status in the multiplayer database
+        FirebaseDatabase.getInstance().getReference("multiplayerGameStatus").setValue(status);
+    }
+
+    private static void launchNewActivity(String status) {
         Intent intent = new Intent(context, GameOver.class);
         intent.putExtra("length", randomWord.length());
         intent.putExtra("status", status);
         context.startActivity(intent);
         ((Activity) context).finish(); // finish this Activity to prevent going back to it
+    }
+
+    static final ValueEventListener gameStatusListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            String status = dataSnapshot.getValue(String.class);
+            if (status != null) {
+                if (status.equalsIgnoreCase("winner")) {
+                    handleGameOver("winner");
+                } else if (status.equalsIgnoreCase("loser")) {
+                    handleGameOver("loser");
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            // Handle error
+        }
+    };
+
+    private static void handleGameOver(String status) {
+        // Perform any necessary actions based on the game over status
+        if (status.equalsIgnoreCase("winner")) {
+            // Handle game over for winner
+            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+            gameWordTextView.setText(randomWord);
+            new Handler().postDelayed(() -> Toast.makeText(context, "You Won!!", Toast.LENGTH_SHORT).show(), 3000);
+        } else if (status.equalsIgnoreCase("loser")) {
+            // Handle game over for loser
+            TextView gameWordTextView = ((Activity) context).findViewById(R.id.gameWord);
+            gameWordTextView.setText(randomWord);
+            new Handler().postDelayed(() -> Toast.makeText(context, "Almost there! The correct word was " + randomWord, Toast.LENGTH_LONG).show(), 3000);
+        }
+
+        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
+        FirebaseDatabase.getInstance().getReference("secretWord").removeValue();
+
+        playingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String playerId = snapshot.getKey();
+                    // Remove player from playingRoom
+                    playingRoomRef.child(playerId).removeValue();
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+            }
+        });
+        // Launch the game over activity for the other player with the corresponding status
+        String otherStatus = status.equalsIgnoreCase("winner") ? "loser" : "winner";
+        launchNewActivity(otherStatus);
     }
 
 }

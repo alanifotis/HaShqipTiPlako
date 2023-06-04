@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -219,14 +218,17 @@ public class Multiplayer extends AppCompatActivity {
                 if (playerCount >= 2) {
                     // At least two players are in the waiting room, stop the count update
                     handler.removeCallbacks(countRunnable);
-                    try {
-                        // Initiate the game
-                        startGame();
-                        // Move players from waiting room to playing room
-                        movePlayersToPlayingRoom(dataSnapshot);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    // Wait for 6 seconds before starting the game
+                    new Handler().postDelayed(() -> {
+                        try {
+                            // Initiate the game
+                            startGame();
+                            // Move players from waiting room to playing room
+                            movePlayersToPlayingRoom(dataSnapshot);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }, 6000); // Delay of 6000 milliseconds (6 seconds)
                 }
             }
 
@@ -235,21 +237,22 @@ public class Multiplayer extends AppCompatActivity {
                 // Handle database error
             }
         });
+
     }
 
 
 
 
     private void startGame() throws IOException {
-        GameOnActivity game = new GameOnActivity();
         int i = random.nextInt(4) + 5;
         String word = RandomWord.selectWord(this, i);
         DatabaseReference secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
+        FirebaseDatabase.getInstance().getReference("multiplayerGameStatus").setValue("started");
         Map<String, Object> wordData = new HashMap<>();
         wordData.put("word", word);
         wordData.put("length", i);
         secretWordRef.setValue(wordData);
-        launchNewGameOnActivity( i, word, this, game, true);
+        launchNewGameOnActivity( i, word, Multiplayer.this, new GameOnActivity(), true);
     }
 
 
@@ -281,10 +284,12 @@ public class Multiplayer extends AppCompatActivity {
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             String playerId = snapshot.getKey();
             // Move player to playingRoom
-            playingRoomRef.child(playerId).setValue(true);
+            playingRoomRef.child(playerId).setValue("playing");
             // Remove player from waitingRoom
             waitingRoomRef.child(playerId).removeValue();
         }
     }
+
+
 
 }

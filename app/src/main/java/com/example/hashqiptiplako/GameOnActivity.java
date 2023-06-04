@@ -23,15 +23,21 @@ public class GameOnActivity extends AppCompatActivity {
     private String secretWord = "";
     private int length = 5;
 
+    private boolean isMultiPlayer;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_on);
 
-        boolean isMultiplayer = getIntent().getBooleanExtra("isMultiplayer", false);
+        this.isMultiPlayer = getIntent().getBooleanExtra("isMultiplayer", false);
 
-        if (isMultiplayer) {
+        if (isMultiPlayer) {
             secretWordRef = FirebaseDatabase.getInstance().getReference("secretWord");
+
+            DatabaseReference gameStatusRef = FirebaseDatabase.getInstance().getReference("multiplayerGameStatus");
+            gameStatusRef.addValueEventListener(InputListener.gameStatusListener);
 
             secretWordListener = new ValueEventListener() {
                 @Override
@@ -80,7 +86,7 @@ public class GameOnActivity extends AppCompatActivity {
 
                 TextInputLayout inputLayout = findViewById(R.id.inputLayout);
                 TextInputEditText inputEditText = inputLayout.findViewById(R.id.inputEditText);
-                InputListener listen = new InputListener(GameOnActivity.this, randomWord, length, hTextViewIds);
+                InputListener listen = new InputListener(GameOnActivity.this, randomWord, length, hTextViewIds, isMultiPlayer);
 
                 for (int j = 0; j < length; j++) {
                     inputEditText.setOnEditorActionListener(listen);

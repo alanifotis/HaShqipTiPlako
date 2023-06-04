@@ -68,11 +68,6 @@ public class GameOver extends AppCompatActivity implements View.OnClickListener 
             this.finish();
         }
     }
-
-
-
-
-
 }
 
 
