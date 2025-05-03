@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -174,18 +175,63 @@ public class Multiplayer extends AppCompatActivity {
         findViewById(R.id.startGameButton).setVisibility(View.INVISIBLE);
         findViewById(R.id.waitingText).setVisibility(View.VISIBLE);
 
-        DatabaseReference waitingRoomRef =  FirebaseDatabase.getInstance().getReference("waitingRoom");
+        DatabaseReference waitingRoomRef = FirebaseDatabase.getInstance().getReference("waitingRoom");
 
         // Create a player object with their information
         Map<String, Object> player = new HashMap<>();
         player.put("playerId", playerId);
 
         // Add the player to the waiting room
-        waitingRoomRef.child(playerId).setValue(player);
+        waitingRoomRef.child(playerId).setValue(player)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Check if the player is the first player in the waiting room
+                        waitingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.getChildrenCount() == 1) {
+                                    // The player is the first player, assign a special value
+                                    player.put("isFirstPlayer", true);
+                                    waitingRoomRef.child(playerId).setValue(player);
+                                    // Start listening for changes in the waiting room count
+                                    listenForWaitingRoomCount();
+                                } else {
+                                    // The player is not the first player, join the existing playing room
+                                    joinPlayingRoom(playerId);
+                                }
+                            }
 
-        // Listen for changes in the waiting room count
-        listenForWaitingRoomCount();
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                // Handle database error
+                            }
+                        });
+                    } else {
+                        // Handle task failure
+                    }
+                });
     }
+
+    private void joinPlayingRoom(String playerId) {
+        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
+        DatabaseReference waitingRoomRef = FirebaseDatabase.getInstance().getReference("waitingRoom");
+
+        // Get the first playing room from the database
+        playingRoomRef.limitToFirst(1).get().addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.exists()) {
+                String roomId = dataSnapshot.getChildren().iterator().next().getKey();
+                // Move the player to the existing playing room
+                playingRoomRef.child(roomId).child(playerId).setValue("playing");
+                // Remove the player from the waiting room
+                waitingRoomRef.child(playerId).removeValue();
+            } else {
+                // No playing rooms found, handle this case
+            }
+        });
+    }
+
+
+
 
     private void listenForWaitingRoomCount() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -220,31 +266,32 @@ public class Multiplayer extends AppCompatActivity {
                 if (playerCount >= 2) {
                     // At least two players are in the waiting room, stop the count update
                     handler.removeCallbacks(countRunnable);
-                    // Wait for 6 seconds before starting the game
-                    new Handler().postDelayed(() -> {
-                        try {
-                            // Initiate the game
-                            startGame();
+                    // Check if the current player is the first player
+                    boolean isFirstPlayer = false;
+                    for (DataSnapshot playerSnapshot : dataSnapshot.getChildren()) {
+                        Map<String, Object> player = (Map<String, Object>) playerSnapshot.getValue();
+                        if (player != null && player.containsKey("isFirstPlayer") && (boolean) player.get("isFirstPlayer")) {
+                            isFirstPlayer = true;
+                            break;
+                        }
+                    }
+
+                    if (isFirstPlayer) {
+                        // The first player can start the game and move players to the playing room
+                        new Handler().postDelayed(() -> {
+
                             // Move players from waiting room to playing room
                             movePlayersToPlayingRoom(dataSnapshot);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }, 6000); // Delay of 6000 milliseconds (6 seconds)
-                    // Display the countdown on the screen
-                    countingTextView.setVisibility(View.VISIBLE);
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 5"), 0); // Delay of 0 milliseconds
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 4"), 1000); // Delay of 1000 milliseconds (1 second)
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 3"), 2000); // Delay of 2000 milliseconds (2 seconds)
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 2"), 3000); // Delay of 3000 milliseconds (3 seconds)
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Game starts in: 1"), 4000); // Delay of 4000 milliseconds (4 seconds)
-
-                    new Handler().postDelayed(() -> countingTextView.setText("Good luck \uD83C\uDF40\uD83E\uDD1E"), 5000); // Delay of 5000 milliseconds (5 seconds)
+                        }, 6000); // Delay of 6000 milliseconds (6 seconds)
+                        // Display the countdown on the screen
+                        countingTextView.setVisibility(View.VISIBLE);
+                        new Handler().postDelayed(() -> countingTextView.setText(getString(R.string.counting, 5)), 0); // Delay of 0 milliseconds
+                        new Handler().postDelayed(() -> countingTextView.setText(getString(R.string.counting, 4)), 1000); // Delay of 1000 milliseconds (1 second)
+                        new Handler().postDelayed(() -> countingTextView.setText(getString(R.string.counting, 3)), 2000); // Delay of 2000 milliseconds (2 seconds)
+                        new Handler().postDelayed(() -> countingTextView.setText(getString(R.string.counting, 2)), 3000); // Delay of 3000 milliseconds (3 seconds)
+                        new Handler().postDelayed(() -> countingTextView.setText(getString(R.string.counting, 1)), 4000); // Delay of 4000 milliseconds (4 seconds)
+                        new Handler().postDelayed(() -> countingTextView.setText("Good luck \uD83C\uDF40\uD83E\uDD1E"), 5000); // Delay of 5000 milliseconds (5 seconds)
+                    }
                 }
             }
 
@@ -253,7 +300,6 @@ public class Multiplayer extends AppCompatActivity {
                 // Handle database error
             }
         });
-
     }
 
 
@@ -270,6 +316,37 @@ public class Multiplayer extends AppCompatActivity {
         secretWordRef.setValue(wordData);
         launchNewGameOnActivity( i, word, Multiplayer.this, new GameOnActivity(), true);
     }
+
+    // Helper method to move players from waiting room to playing room
+    private void movePlayersToPlayingRoom(DataSnapshot dataSnapshot) {
+        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
+        DatabaseReference waitingRoomRef = FirebaseDatabase.getInstance().getReference("waitingRoom");
+
+        // Generate a single roomID for the playing room
+        String roomID = "playingRoom-" + generatePlayerId() + generatePlayerId() + generatePlayerId();
+
+        // Iterate over the players in the waiting room and move them to the playing room
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            String playerId = snapshot.getKey();
+
+            // Move player to playingRoom using the same roomID for all players
+            playingRoomRef.child(roomID).child(playerId).setValue("playing");
+
+            // Remove player from waitingRoom
+            waitingRoomRef.child(playerId).removeValue();
+        }
+
+        try {
+            // Initiate the game
+            startGame();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+
 
 
 
@@ -291,21 +368,5 @@ public class Multiplayer extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    // Helper method to move players from waiting room to playing room
-    private void movePlayersToPlayingRoom(DataSnapshot dataSnapshot) {
-        DatabaseReference playingRoomRef = FirebaseDatabase.getInstance().getReference("playingRoom");
-        DatabaseReference waitingRoomRef = FirebaseDatabase.getInstance().getReference("waitingRoom");
-
-        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            String playerId = snapshot.getKey();
-            // Move player to playingRoom
-            playingRoomRef.child(playerId).setValue("playing");
-            // Remove player from waitingRoom
-            waitingRoomRef.child(playerId).removeValue();
-        }
-    }
-
-
 
 }
